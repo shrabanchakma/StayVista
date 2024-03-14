@@ -5,7 +5,6 @@ const Calender = ({ value, handleSelect }) => {
     <DateRange
       rangeColors={["#F43F5E"]}
       // ranges={[value]}
-      ranges={[value]}
       // onChange={handleSelect}
       // date={value.startDate}
       direction="vertical"
