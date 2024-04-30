@@ -95,6 +95,13 @@ async function run() {
       }
     });
 
+    // save sing room
+    app.post("/rooms", verifyToken, async (req, res) => {
+      const roomData = req.body;
+      const result = await roomsCollection.insertOne(roomData);
+      res.send(result);
+    });
+
     // Save or modify user email, status in DB
     app.put("/users/:email", async (req, res) => {
       const email = req.params.email;
@@ -111,6 +118,16 @@ async function run() {
         },
         options
       );
+      res.send(result);
+    });
+
+    // host rooms
+    app.get("/rooms/:email", async (req, res) => {
+      console.log("entering");
+      const email = req.params.email;
+      const result = await roomsCollection
+        .find({ "host.email": email })
+        .toArray();
       res.send(result);
     });
 

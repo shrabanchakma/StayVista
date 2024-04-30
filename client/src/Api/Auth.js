@@ -19,7 +19,6 @@ export const getToken = async (email) => {
 };
 
 // Clear token
-
 export const clearToken = async () => {
   const { data } = await axiosSecure.get("/logout");
   return data;
