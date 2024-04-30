@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "./Card";
 import Container from "../Shared/Container";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import Heading from "../Shared/Heading/Heading";
 import Loader from "../Shared/Loader";
 import { getAllRooms } from "../../Api/rooms";
@@ -9,20 +9,29 @@ import { getAllRooms } from "../../Api/rooms";
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [params] = useSearchParams();
+  const category = params.get("category");
   const getRooms = async () => {
     try {
       setLoading(true);
       const allRooms = await getAllRooms();
-      setRooms(allRooms);
+      console.log(allRooms);
+      if (category) {
+        const filtered = allRooms.filter((room) => room.category === category);
+        console.log("filtered rooms ", filtered);
+        setRooms(filtered);
+      } else {
+        setRooms(rooms);
+      }
       setLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
     getRooms();
-  }, []);
+  }, [category]);
 
   if (loading) return <Loader />;
   return (

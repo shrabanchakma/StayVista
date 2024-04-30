@@ -4,7 +4,8 @@ import { categories } from "./CategoriesData";
 import CategoryBox from "./CategoryBox";
 
 const Categories = () => {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
+  console.log(params);
   const category = params.get("category");
   return (
     <Container>
