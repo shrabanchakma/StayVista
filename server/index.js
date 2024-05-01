@@ -121,6 +121,14 @@ async function run() {
       res.send(result);
     });
 
+    // get user
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await usersCollection.findOne({ email });
+      // use projection to send specific properties
+      res.send(result);
+    });
+
     // host rooms
     app.get("/rooms/:email", async (req, res) => {
       console.log("entering");

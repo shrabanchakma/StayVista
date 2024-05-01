@@ -10,6 +10,7 @@ import { getSingleRoom } from "../Api/rooms";
 import DashboardLayout from "../layouts/DashBoardLayout";
 import AddRoom from "../components/Dashboard/Host/AddRoom";
 import MyListings from "../components/Dashboard/Host/MyListings";
+import HostRoute from "./HostRoute";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -35,15 +36,31 @@ export const router = createBrowserRouter([
   { path: "/signup", element: <SignUp /> },
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "add-room",
-        element: <AddRoom />,
+        element: (
+          <PrivateRoute>
+            <HostRoute>
+              <AddRoom />
+            </HostRoute>
+          </PrivateRoute>
+        ),
       },
       {
         path: "my-listings",
-        element: <MyListings />,
+        element: (
+          <PrivateRoute>
+            <HostRoute>
+              <MyListings />
+            </HostRoute>
+          </PrivateRoute>
+        ),
       },
     ],
   },
