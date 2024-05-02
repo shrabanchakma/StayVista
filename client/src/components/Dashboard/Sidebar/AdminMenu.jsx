@@ -5,8 +5,8 @@ const AdminMenu = () => {
     <>
       <MenuItem
         icon={FaUserCog}
-        label={"My Bookings"}
-        address={"my-bookings"}
+        label={"Manage Users"}
+        address={"manage-users"}
       />
     </>
   );

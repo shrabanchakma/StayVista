@@ -11,6 +11,9 @@ import DashboardLayout from "../layouts/DashBoardLayout";
 import AddRoom from "../components/Dashboard/Host/AddRoom";
 import MyListings from "../components/Dashboard/Host/MyListings";
 import HostRoute from "./HostRoute";
+import MyBookings from "../components/Dashboard/Guest/MyBookings";
+import AdminRoute from "./AdminRoute";
+import ManageUsers from "../components/Dashboard/Admin/ManageUsers";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +62,24 @@ export const router = createBrowserRouter([
             <HostRoute>
               <MyListings />
             </HostRoute>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-bookings",
+        element: (
+          <PrivateRoute>
+            <MyBookings />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "manage-users",
+        element: (
+          <PrivateRoute>
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },

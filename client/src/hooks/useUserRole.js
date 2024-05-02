@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { getRole } from "../Api/Auth";
+import { useQuery } from "@tanstack/react-query";
 
 const useUserRole = () => {
-  const { user } = useAuth();
-  const [role, setRole] = useState();
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
-    getRole(user?.email).then((data) => {
-      setRole(data);
-      setLoading(false);
-    });
-  }, [user]);
+  const { user, loading } = useAuth();
+  const { data: role, isLoading } = useQuery({
+    enabled: !loading && !!user?.email,
+    queryFn: async () => await getRole(user?.email),
+    queryKey: ["role"],
+  });
 
-  return [role, loading];
+  return [role, isLoading];
 };
 
 export default useUserRole;
