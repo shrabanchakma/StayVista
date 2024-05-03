@@ -7,7 +7,6 @@ const axiosSecure = axios.create({
 export default axiosSecure;
 
 // intercept server response
-
 axios.interceptors.response.use(
   (response) => response,
   async (err) => {

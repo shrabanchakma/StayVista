@@ -7,7 +7,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const port = process.env.PORT || 8000;
-
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // middleware
 const corsOptions = {
   origin: ["http://localhost:5173", "http://localhost:5174"],
@@ -44,6 +44,7 @@ async function run() {
   try {
     const usersCollection = client.db("stayVistaDb").collection("users");
     const roomsCollection = client.db("stayVistaDb").collection("rooms");
+    const bookingsCollection = client.db("stayVistaDb").collection("bookings");
     // auth related api
     app.post("/jwt", async (req, res) => {
       const user = req.body;
@@ -136,6 +137,42 @@ async function run() {
       const result = await roomsCollection
         .find({ "host.email": email })
         .toArray();
+      res.send(result);
+    });
+
+    // create payment intent
+    app.post("/create-payment-intent", async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      if (!price || amount < 1) return;
+      const { client_secret } = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+      });
+      res.send({ clientSecret: client_secret });
+    });
+
+    // save booking info in booking collection
+    app.post("/bookings", async (req, res) => {
+      const data = req.body;
+      const result = await bookingsCollection.insertOne(data);
+      // send email
+      res.send(result);
+    });
+
+    // update room booking status
+    app.patch("/rooms/status/:id", async (req, res) => {
+      const userId = req.params.id;
+      const status = req.body.status;
+      console.log(userId, status);
+      const query = { _id: new ObjectId(userId) };
+      const updateDoc = {
+        $set: {
+          booked: status,
+        },
+      };
+      const result = await roomsCollection.updateOne(query, updateDoc);
       res.send(result);
     });
 
