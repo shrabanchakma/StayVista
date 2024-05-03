@@ -176,6 +176,24 @@ async function run() {
       res.send(result);
     });
 
+    // get all bookings for guest
+    app.get("/bookings", verifyToken, async (req, res) => {
+      const email = req.query.email;
+      if (!email) return res.send([]);
+      const result = await bookingsCollection
+        .find({ "guest.email": email })
+        .toArray();
+      res.send(result);
+    });
+
+    // get all bookings for host
+    app.get("/bookings/host", verifyToken, async (req, res) => {
+      const email = req.query.email;
+      if (!email) return res.send([]);
+      const result = await bookingsCollection.find({ host: email }).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
