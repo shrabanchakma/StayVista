@@ -15,13 +15,12 @@ const Rooms = () => {
     try {
       setLoading(true);
       const allRooms = await getAllRooms();
-      console.log(allRooms);
       if (category) {
         const filtered = allRooms.filter((room) => room.category === category);
         console.log("filtered rooms ", filtered);
         setRooms(filtered);
       } else {
-        setRooms(rooms);
+        setRooms(allRooms);
       }
       setLoading(false);
     } catch (error) {
