@@ -1,13 +1,13 @@
 import { AiOutlineMenu } from "react-icons/ai";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
 
 const MenuDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logOut } = useAuth();
-
+  const navigate = useNavigate();
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
@@ -55,7 +55,10 @@ const MenuDropdown = () => {
                   Dashboard
                 </Link>
                 <div
-                  onClick={logOut}
+                  onClick={() => {
+                    logOut;
+                    navigate("/login");
+                  }}
                   className="px-4 py-3 hover:bg-neutral-100 transition font-semibold"
                 >
                   Logout

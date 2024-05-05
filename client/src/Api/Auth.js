@@ -45,3 +45,12 @@ export const updateRole = async ({ email, role }) => {
   });
   return data;
 };
+
+// update user status
+export const updateStatus = async (email) => {
+  const { data } = await axiosSecure.put(`/users/${email}`, {
+    email,
+    status: "Requested",
+  });
+  return data;
+};
