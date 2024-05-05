@@ -45,6 +45,23 @@ async function run() {
     const usersCollection = client.db("stayVistaDb").collection("users");
     const roomsCollection = client.db("stayVistaDb").collection("rooms");
     const bookingsCollection = client.db("stayVistaDb").collection("bookings");
+    // Role verification middleware
+    // for admin
+    const verifyAdmin = async (req, res, next) => {
+      const user = req.user;
+      const result = await usersCollection.findOne({ email: user?.email });
+      if (!result || result?.data?.role !== "admin")
+        return res.status(401).send({ message: "unauthorized access" });
+      next();
+    };
+    // for host
+    const verifyHost = async (req, res, next) => {
+      const user = req.user;
+      const result = await usersCollection.findOne({ email: user?.email });
+      if (!result || result?.data?.role !== "host")
+        return res.status(401).send({ message: "unauthorized access" });
+      next();
+    };
     // auth related api
     app.post("/jwt", async (req, res) => {
       const user = req.body;
@@ -96,7 +113,7 @@ async function run() {
       }
     });
 
-    // save sing room
+    // save single room
     app.post("/rooms", verifyToken, async (req, res) => {
       const roomData = req.body;
       const result = await roomsCollection.insertOne(roomData);
@@ -199,7 +216,7 @@ async function run() {
     });
 
     // get all bookings for host
-    app.get("/bookings/host", verifyToken, async (req, res) => {
+    app.get("/bookings/host", verifyToken, verifyHost, async (req, res) => {
       const email = req.query.email;
       if (!email) return res.send([]);
       const result = await bookingsCollection.find({ host: email }).toArray();
@@ -207,7 +224,7 @@ async function run() {
     });
 
     // get all users
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       console.log(result.data);
       res.send(result);
