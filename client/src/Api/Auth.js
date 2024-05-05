@@ -13,7 +13,7 @@ export const saveUser = async (user) => {
 
 // Create token for the user
 export const getToken = async (email) => {
-  const { data } = await axiosSecure.post("/jwt", email);
+  const { data } = await axiosSecure.post("/jwt", { email });
   console.log("token is :  ", data);
   return data;
 };

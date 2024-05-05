@@ -1,19 +1,20 @@
 import { AiOutlineMenu } from "react-icons/ai";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
 import HostModal from "../../Modal/HostRequestModal";
 import { updateStatus } from "../../../Api/Auth";
 import toast from "react-hot-toast";
+import useUserRole from "../../../hooks/useUserRole";
 
 const MenuDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, logOut } = useAuth();
-  const navigate = useNavigate();
+  const [role] = useUserRole();
   const closeModal = () => {
-    setIsOpen(false);
+    setIsModalOpen(false);
   };
   const modalHandler = async () => {
     // request to be a host
@@ -34,12 +35,15 @@ const MenuDropdown = () => {
       <div className="flex flex-row items-center gap-3">
         {/* Become A Host btn */}
         <div className="hidden md:block">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
-          >
-            Host your home
-          </button>
+          {(!user || !role || role === "guest") && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              disabled={!user}
+              className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
+            >
+              Host your home
+            </button>
+          )}
         </div>
         {/* Dropdown btn */}
         <div
@@ -79,10 +83,7 @@ const MenuDropdown = () => {
                   Dashboard
                 </Link>
                 <div
-                  onClick={() => {
-                    logOut;
-                    navigate("/login");
-                  }}
+                  onClick={() => logOut()}
                   className="px-4 py-3 hover:bg-neutral-100 transition font-semibold"
                 >
                   Logout

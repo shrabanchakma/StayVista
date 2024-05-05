@@ -49,7 +49,7 @@ const ManageUsers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* User data table row */}\
+                  {/* User data table row */}
                   {users &&
                     users.map((user) => (
                       <UserDataRow

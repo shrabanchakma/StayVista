@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const port = process.env.PORT || 8000;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require("nodemailer");
 // middleware
 const corsOptions = {
   origin: ["http://localhost:5173", "http://localhost:5174"],
@@ -33,6 +34,25 @@ const verifyToken = async (req, res, next) => {
     next();
   });
 };
+
+const sendEmail = async () => {
+  // create a transporter
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "stmp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+    },
+  });
+  // verify connection
+  transporter.verify((error, success) => {
+    if (error) console.log(error);
+    else console.log("server is ready to take our emails", success);
+  });
+};
 const client = new MongoClient(process.env.DB_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -42,6 +62,7 @@ const client = new MongoClient(process.env.DB_URI, {
 });
 async function run() {
   try {
+    sendEmail();
     const usersCollection = client.db("stayVistaDb").collection("users");
     const roomsCollection = client.db("stayVistaDb").collection("rooms");
     const bookingsCollection = client.db("stayVistaDb").collection("bookings");
@@ -49,8 +70,10 @@ async function run() {
     // for admin
     const verifyAdmin = async (req, res, next) => {
       const user = req.user;
+      console.log("user is------", user);
       const result = await usersCollection.findOne({ email: user?.email });
-      if (!result || result?.data?.role !== "admin")
+      console.log(result);
+      if (!result || result?.role !== "admin")
         return res.status(401).send({ message: "unauthorized access" });
       next();
     };
