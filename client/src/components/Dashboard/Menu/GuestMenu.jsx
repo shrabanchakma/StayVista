@@ -23,6 +23,8 @@ const GuestMenu = () => {
       else toast.success("Already Requested! Please wait for confirmation");
     } catch (err) {
       console.log(err.message);
+    } finally {
+      setIsOpen(false);
     }
   };
   return (

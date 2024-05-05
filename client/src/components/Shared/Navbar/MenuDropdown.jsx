@@ -3,17 +3,41 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
+import HostModal from "../../Modal/HostRequestModal";
+import { updateStatus } from "../../../Api/Auth";
+import toast from "react-hot-toast";
 
 const MenuDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, logOut } = useAuth();
   const navigate = useNavigate();
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+  const modalHandler = async () => {
+    // request to be a host
+    try {
+      const { modifiedCount } = await updateStatus(user?.email);
+      if (modifiedCount > 0)
+        toast.success("Request SuccessFull! Please wait for confirmation");
+      else toast.success("Already Requested! Please wait for confirmation");
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
         {/* Become A Host btn */}
         <div className="hidden md:block">
-          <button className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
+          >
             Host your home
           </button>
         </div>
@@ -83,6 +107,11 @@ const MenuDropdown = () => {
           </div>
         </div>
       )}
+      <HostModal
+        modalHandler={modalHandler}
+        closeModal={closeModal}
+        isOpen={isModalOpen}
+      />
     </div>
   );
 };
