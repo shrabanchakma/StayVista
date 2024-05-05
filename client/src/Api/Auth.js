@@ -29,3 +29,19 @@ export const getRole = async (email) => {
   const { data } = await axiosSecure(`/user/${email}`);
   return data.role;
 };
+
+// get all users
+export const getUsers = async () => {
+  const { data } = await axiosSecure("/users");
+  return data;
+};
+
+// update user role
+export const updateRole = async ({ email, role }) => {
+  const { data } = await axiosSecure.put(`/users/update/${email}`, {
+    email,
+    role,
+    status: "Verified",
+  });
+  return data;
+};

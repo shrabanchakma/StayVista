@@ -194,6 +194,29 @@ async function run() {
       res.send(result);
     });
 
+    // get all users
+    app.get("/users", verifyToken, async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      console.log(result.data);
+      res.send(result);
+    });
+
+    // update user role
+    app.put("/users/update/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const result = await usersCollection.updateOne(
+        { email },
+        {
+          $set: {
+            ...user,
+            timestamp: Date.now(),
+          },
+        },
+        { upsert: true }
+      );
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
